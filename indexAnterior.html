@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD - Cuvi - Python</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" 
+       crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/alertify.min.css"/>
+    <!-- Default theme -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/default.min.css"/>
+    <!-- Semantic UI theme -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/semantic.min.css"/>
+    <!-- Bootstrap theme -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-p6O5X7Q2Q+V6k8jzYp8Z1m2GxZr2a8m1Zp3XfLz0r1H6QZ2c6p9r5bQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Cuvipop</a>
+            <div class="collapse navbar-collapse" id="mnxPedidos">
+                <div class="navbar-nav me-auto">
+                    <a class="nav-link" href="#" id="aside-inicio">Inicio</a>
+                    <a class="nav-link" href="#" login >Login</a> 
+                    <a class="nav-link" href="#" data-form="pedidos">Pedidos</a>
+                    <a class="nav-link" href="#" data-form="productos">Productos</a>
+                    <a class="nav-link" href="#" data-form="empleados">Empleados</a>
+                </div>
+                <div class="navbar-user ms-auto">
+                    <div class="user-badge" id="userName">admin</div>
+                    <button class="btn-logout" id="btnLogout"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-3">
+        <div class="row">
+            <aside class="col-md-2 d-none d-md-block">
+                <div class="list-group">
+                   
+            </aside>
+            <main class="col-md-10" id="mainContent">
+                <section id="inicio">
+                    <div class="hero">
+                        <div class="hero container">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="hero-inner">
+                                        <h1 class="display-5">Cuvipop</h1>
+                                        <p class="lead">Bienvenido a la administración de Cuvipop. Gestiona pedidos, productos y empleados desde una interfaz simple y cálida.</p>
+                                        <p><a class="btn btn-outline-primary" href="#" role="button" onclick="mostrarInicio()">Ver inicio</a></p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <img src="https://via.placeholder.com/160x120.png?text=Cuvipop" alt="logo" class="img-fluid rounded">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="features container mt-4">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="card p-3 text-center">
+                                    <h5>Panel de Pedidos</h5>
+                                    <p class="small">Crea y administra pedidos fácilmente.</p>
+                                    <p><a href="#" class="btn btn-sm btn-outline-info" onclick="abrirVentana('pedidos')">Abrir</a></p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card p-3 text-center">
+                                    <h5>Inventario</h5>
+                                    <p class="small">Gestiona tus productos y categorías.</p>
+                                    <p><a href="#" class="btn btn-sm btn-outline-info" onclick="abrirVentana('productos')">Abrir</a></p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card p-3 text-center">
+                                    <h5>Equipo</h5>
+                                    <p class="small">Añade y administra empleados con permisos.</p>
+                                    <p><a href="#" class="btn btn-sm btn-outline-info" onclick="abrirVentana('empleados')">Abrir</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="site-footer container mt-4">
+                    <div class="row">
+                        <div class="col-md-6 text-start">&copy; 2025 Cuvipop. Todos los derechos reservados.</div>
+                        <div class="col-md-6 text-end">Contacto: soporte@cuvipop.example</div>
+                    </div>
+                </footer>
+
+                <!-- Contenedores para mostrar los formularios y búsquedas (flotantes) -->
+                <div class="position-relative mt-3">
+                    <div class="position-absolute" id="pedidos"></div>
+                    <div class="position-absolute" id="busqueda_pedidos"></div>
+                    
+                    <div class="position-absolute" id="productos"></div>
+                    <div class="position-absolute" id="busqueda_productos"></div>
+                    
+                    <div class="position-absolute" id="empleados"></div>
+                    <div class="position-absolute" id="busqueda_empleados"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.14.1/jquery-ui.min.js" integrity="sha512-MSOo1aY+3pXCOCdGAYoBZ6YGI0aragoQsg1mKKBHXCYPIWxamwOE7Drh+N5CPgGI5SA9IEKJiPjdfqWFWmZtRA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- JavaScript -->
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+    
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", event=>{
+            // Manejo de clicks en menú superior y aside
+            document.querySelectorAll('[data-form]').forEach(el => {
+                el.addEventListener('click', e => {
+                    e.preventDefault();
+                    const form = e.currentTarget.dataset.form;
+                    if (form) abrirVentana(form);
+                });
+            });
+
+            // Click en Inicio (aside)
+            const asideInicio = document.getElementById('aside-inicio');
+            if (asideInicio) asideInicio.addEventListener('click', e=>{ e.preventDefault(); mostrarInicio(); });
+        });
+
+       function abrirVentana(form, callback){
+    let $ventana = $(`#${form}`);
+
+    // Si nunca se cargó la ventana, la carga desde el servidor
+    if( $ventana.find('> form').length === 0 ){
+        fetch(`/vistas?form=${form}`)
+        .then(response => response.text())
+        .then(ventana => {
+            $ventana.html(ventana).draggable().show();
+            // Inicializar botones cada vez que se carga
+            cerrarVentana();
+            minimizarVentana();
+            if(callback) callback();
+        })
+        .catch(error => console.error('Error al cargar el formulario:', error));
+    } else {
+        // Si ya existe, restaurar si estaba minimizada
+        if ($ventana.hasClass('minimizado')) {
+            $ventana.removeClass('minimizado').css({
+                width: '',
+                height: '',
+                opacity: 1,
+                overflow: ''
+            });
+            $ventana.find('form, .contenido').show();
+        }
+        // Mostrar siempre la ventana y traer al frente
+        $ventana.show().css({ zIndex: 9999 });
+
+        // Reasignar eventos de cerrar/minimizar
+        cerrarVentana();
+        minimizarVentana();
+    }
+}
+
+        function mostrarInicio(){
+            // esconder las ventanas flotantes y mostrar la sección inicio
+            $('#pedidos, #productos, #empleados, #busqueda_pedidos, #busqueda_productos, #busqueda_empleados').hide();
+            document.getElementById('inicio').scrollIntoView({behavior: 'smooth'});
+        }
+
+
+       function cerrarVentana() {
+    $('.btn-close').off('click').click(e => {
+        let form = e.target.dataset.form;
+        let $ventana = $(`#${form}`);
+        $ventana.fadeOut(200, function() {
+            $ventana.html(''); // se elimina después del efecto
+        });
+    });
+}
+
+
+
+
+    function minimizarVentana() {
+    $('.btn-minimizar').off('click').click(e => {
+        let form = e.target.dataset.form;
+        let $ventana = $(`#${form}`);
+
+        if ($ventana.hasClass('minimizado')) {
+            // Restaurar ventana
+            $ventana.removeClass('minimizado').css({
+                width: '',
+                height: '',
+                opacity: 1,
+                overflow: ''
+            });
+            $ventana.find('.contenido, form').show();
+        } else {
+            // Minimizar ventana
+            $ventana.addClass('minimizado').css({
+                width: '250px',
+                height: '40px',
+                opacity: 0.8,
+                overflow: 'hidden'
+            });
+            $ventana.find('.contenido, form').hide();
+        }
+    });
+}
+
+
+
+
+    </script>
+    <script>
+        // Mostrar nombre de usuario desde cookie 'session' y manejar logout
+        function readCookie(name){
+            const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+            return v ? v.pop() : null;
+        }
+
+        function eraseCookie(name){ document.cookie = name + '=; Max-Age=0; path=/'; }
+
+        document.addEventListener('DOMContentLoaded', ()=>{
+            const user = readCookie('session');
+            if(user) document.getElementById('userName').textContent = user;
+            const btn = document.getElementById('btnLogout');
+            if(btn) btn.addEventListener('click', ()=>{ eraseCookie('session'); window.location='/login'; });
+        });
+    </script>
+    
+
+    
+</body>
+</html>

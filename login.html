@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Login - Dulce Frescura</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #2c1a1d 0%, #4a2c2a 100%);
+      padding: 20px;
+    }
+    
+    .login-container {
+      display: flex;
+      width: 900px;
+      max-width: 95%;
+      height: 500px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    }
+    
+    .brand-side {
+      flex: 1;
+      background: linear-gradient(135deg, #3a2326 0%, #5a3734 100%);
+      color: #fff;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .brand-side::before {
+      content: "";
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 182, 193, 0.1);
+      border-radius: 50%;
+      top: -50px;
+      left: -50px;
+    }
+    
+    .brand-side::after {
+      content: "";
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      background: rgba(255, 215, 204, 0.1);
+      border-radius: 50%;
+      bottom: -50px;
+      right: -30px;
+    }
+    
+    .brand-logo {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #ffb7b2;
+      z-index: 1;
+    }
+    
+    .brand-tagline {
+      font-size: 1rem;
+      color: #e8c3c0;
+      margin-bottom: 30px;
+      z-index: 1;
+    }
+    
+    .brand-icons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      z-index: 1;
+    }
+    
+    .brand-icon {
+      font-size: 2rem;
+      color: #ffb7b2;
+    }
+    
+    .login-side {
+      flex: 1;
+      background: #fff;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .login-header {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .login-title {
+      font-size: 1.8rem;
+      color: #3a2326;
+      margin-bottom: 8px;
+    }
+    
+    .login-subtitle {
+      color: #8c5e5e;
+      font-size: 0.9rem;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #5a4a42;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #e0d6d2;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background-color: #fcf9f7;
+    }
+    
+    input[type="text"]:focus, input[type="password"]:focus {
+      outline: none;
+      border-color: #d46a6a;
+      box-shadow: 0 0 0 2px rgba(212, 106, 106, 0.2);
+      background-color: #fff;
+    }
+    
+    .error {
+      color: #b00020;
+      margin-bottom: 15px;
+      padding: 12px;
+      background-color: #ffebee;
+      border-radius: 8px;
+      border-left: 4px solid #b00020;
+      font-size: 0.9rem;
+      display: none;
+    }
+    
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #d46a6a 0%, #b55a5a 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(212, 106, 106, 0.3);
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #b55a5a 0%, #9a4a4a 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(212, 106, 106, 0.4);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .forgot-password {
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .forgot-password a {
+      color: #8c5e5e;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+    
+    .forgot-password a:hover {
+      color: #d46a6a;
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      .login-container {
+        flex-direction: column;
+        height: auto;
+      }
+      
+      .brand-side {
+        padding: 30px 20px;
+      }
+      
+      .login-side {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="brand-side">
+      <div class="brand-logo">Dulce Frescura</div>
+      <div class="brand-tagline">Delicias frías para calentar tu corazón</div>
+      <div class="brand-icons">
+        <div class="brand-icon">🍓</div>
+        <div class="brand-icon">🍦</div>
+        <div class="brand-icon">🍧</div>
+        <div class="brand-icon">🥭</div>
+      </div>
+    </div>
+    
+    <div class="login-side">
+      <div class="login-header">
+        <h2 class="login-title">Iniciar Sesión</h2>
+        <p class="login-subtitle">Accede a tu cuenta para gestionar el menú</p>
+      </div>
+      
+      <div id="error" class="error">Usuario o contraseña inválidos</div>
+      
+      <form method="post" action="/login">
+        <div class="form-group">
+          <label for="username">Usuario</label>
+          <input id="username" name="username" type="text" required autofocus>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input id="password" name="password" type="password" required>
+        </div>
+        
+        <button type="submit">Entrar</button>
+      </form>
+      
+      <div class="forgot-password">
+        <a href="#">¿Olvidaste tu contraseña?</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // mostrar mensaje si ?error=1
+    const params = new URLSearchParams(location.search);
+    if (params.get('error') === '1') {
+      document.getElementById('error').style.display = 'block';
+    } else {
+      document.getElementById('error').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

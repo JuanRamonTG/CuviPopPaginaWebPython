@@ -1,6 +1,7 @@
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib import parse
 from urllib.parse import urlparse, parse_qs
+from http import cookies
 import json
 from decimal import Decimal
 from datetime import datetime
@@ -14,6 +15,9 @@ crudProductos = crud_productos.crud_productos()
 
 port = 3000
 
+# Credenciales en memoria (simple)
+USERS = {"admin": "admin"}
+
 #Clase para convertir Decimal y datetime a JSON
 class CustomEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -24,12 +28,36 @@ class CustomEncoder(json.JSONEncoder):
         return super().default(obj)
 
 class miServidor(SimpleHTTPRequestHandler):
+    def parse_cookies(self):
+        cookie_header = self.headers.get('Cookie')
+        if not cookie_header:
+            return {}
+        c = cookies.SimpleCookie()
+        c.load(cookie_header)
+        return {k: v.value for k, v in c.items()}
+
+    def is_logged(self):
+        c = self.parse_cookies()
+        return 'session' in c and c['session'] in USERS
+
     def do_GET(self):
         url_parseada = urlparse(self.path)
         path = url_parseada.path
         parametros = parse_qs(url_parseada.query)
 
-        if self.path == "/":
+        # Ruta de login (mostrar formulario)
+        if path == "/login":
+            # servir login.html (se puede añadir ?error=1 para mostrar mensaje)
+            self.path = "login.html"
+            return SimpleHTTPRequestHandler.do_GET(self)
+
+        # Proteger la raíz: si no está logueado, redirigir a /login
+        if path == "/":
+            if not self.is_logged():
+                self.send_response(303)
+                self.send_header('Location', '/login')
+                self.end_headers()
+                return
             self.path = "index.html"
             return SimpleHTTPRequestHandler.do_GET(self)
 
@@ -79,8 +107,48 @@ class miServidor(SimpleHTTPRequestHandler):
             self.path = '/modulos/' + parametros['form'][0] + '.html'
             return SimpleHTTPRequestHandler.do_GET(self)
 
+        # Fallback: servir archivos estáticos (ej. /menu.html, /styles.css)
+        return SimpleHTTPRequestHandler.do_GET(self)
+
     def do_POST(self):
         try:
+            path = urlparse(self.path).path
+
+            # Manejar login separadamente (acepta form-urlencoded o json)
+            if path == "/login":
+                longitud = int(self.headers.get('Content-Length', 0))
+                datos = self.rfile.read(longitud).decode('utf-8')
+                ctype = self.headers.get('Content-Type', '')
+                username = None
+                password = None
+                if 'application/json' in ctype:
+                    try:
+                        payload = json.loads(parse.unquote(datos))
+                        username = payload.get('username')
+                        password = payload.get('password')
+                    except Exception:
+                        pass
+                else:
+                    # form-urlencoded
+                    parsed = parse.parse_qs(datos)
+                    username = parsed.get('username', [None])[0]
+                    password = parsed.get('password', [None])[0]
+
+                if username and password and USERS.get(username) == password:
+                    # cookie muy simple
+                    self.send_response(303)
+                    self.send_header('Set-Cookie', f'session={username}; Path=/')
+                    self.send_header('Location', '/')
+                    self.end_headers()
+                    return
+                else:
+                    # redirigir de nuevo al login con error
+                    self.send_response(303)
+                    self.send_header('Location', '/login?error=1')
+                    self.end_headers()
+                    return
+
+            # Si no es login, procesar como antes (JSON esperado)
             longitud = int(self.headers['Content-Length'])
             datos = self.rfile.read(longitud)
             datos = datos.decode("utf-8")
@@ -88,7 +156,6 @@ class miServidor(SimpleHTTPRequestHandler):
             datos = json.loads(datos)
 
             # Determinar a qué CRUD enviar los datos según la ruta
-            path = urlparse(self.path).path
             if path == "/pedidos":
                 resultado = crudPedidos.administrar(datos)
             elif path == "/empleados":
