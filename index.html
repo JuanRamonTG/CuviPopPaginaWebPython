@@ -14,6 +14,36 @@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/semantic.min.css"/>
     <!-- Bootstrap theme -->
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/bootstrap.min.css"/>
+
+<style>
+    /* Estilo para el botón de minimizar similar al de cerrar (X) */
+    .btn-minimizar {
+        position: relative;
+        width: 1.2rem;
+        height: 1.2rem;
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        border: none;
+        color: #fff;
+        opacity: .5;
+        transition: opacity .15s;
+    }
+    .btn-minimizar:hover {
+        opacity: .75;
+    }
+    .btn-minimizar::before {
+        content: '';
+        position: absolute;
+        left: 25%;
+        top: 50%;
+        width: 50%;
+        height: 2px;
+        background-color: currentColor;
+        transform: translateY(-50%);
+        border-radius: 1px;
+    }
+</style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -140,6 +170,8 @@
 
 
     </script>
+    
+
     
 </body>
 </html>
