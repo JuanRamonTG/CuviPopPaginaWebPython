@@ -1,0 +1,141 @@
+<form id="frmProductos"> 
+    <div class="card text-bg-dark" style="min-width: 700px;">
+        <div class="card-header">
+            <div class="d-flex">
+                ADMINISTRACION DE PRODUCTOS
+                <div class="ms-auto">
+                    <button data-form="productos" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row p-1">
+                <div class="col-3 col-md-2">NOMBRE</div>
+                <div class="col-9 col-md-4">
+                    <input required type="text" id="txtNombreProducto" name="txtNombreProducto" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row p-1">
+                <div class="col-3 col-md-2">DESCRIPCIÓN</div>
+                <div class="col-9 col-md-8">
+                    <input required type="text" id="txtDescripcionProducto" name="txtDescripcionProducto" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row p-1">
+                <div class="col-3 col-md-2">PRECIO</div>
+                <div class="col-9 col-md-3">
+                    <input required type="number" step="0.01" id="txtPrecioProducto" name="txtPrecioProducto" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row p-1">
+                <div class="col-3 col-md-2">CATEGORÍA</div>
+                <div class="col-9 col-md-3">
+                    <input required type="text" id="txtCategoriaProducto" name="txtCategoriaProducto" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row p-1">
+                <div class="col-3 col-md-2">ESTADO</div>
+                <div class="col-9 col-md-3">
+                    <input required type="text" id="txtEstadoProducto" name="txtEstadoProducto" class="form-control form-control-sm" />
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <input type="submit" id="btnGuardarProducto" name="btnGuardarProducto" class="btn btn-outline-primary" value="GUARDAR" />
+            <input type="reset" id="btnNuevoProducto" name="btnNuevoProducto" class="btn btn-outline-warning" value="NUEVO" />
+            <input type="button" id="btnBuscarProducto" name="btnBuscarProducto" class="btn btn-outline-info" value="BUSCAR" />
+        </div>
+    </div>
+</form>
+
+<script>
+var accion = "nuevo",
+    idProducto = 0;
+
+frmProductos.addEventListener("submit", e => {
+    e.preventDefault();
+    guardarProductos();
+});
+
+async function guardarProductos(){
+    let datos = {
+        accion,
+        idProducto,
+        nombre: txtNombreProducto.value,
+        descripcion: txtDescripcionProducto.value,
+        precio: txtPrecioProducto.value,
+        categoria: txtCategoriaProducto.value,
+        estado: txtEstadoProducto.value
+    };
+    let response = await fetch("/productos", {
+        method: "POST",
+        body: JSON.stringify(datos),
+    }),
+    respuesta = await response.json();
+
+    if(respuesta.msg != "ok"){
+        alertify.error(`Error al procesar producto: ${respuesta}`);
+        return;
+    }
+    limpiarFormulario();
+    obtenerProductos();
+}
+
+function limpiarFormulario(){
+    accion = "nuevo";
+    idProducto = 0;
+    txtNombreProducto.value = "";
+    txtDescripcionProducto.value = "";
+    txtPrecioProducto.value = "";
+    txtCategoriaProducto.value = "";
+    txtEstadoProducto.value = "";
+}
+
+async function obtenerProductos(){
+    let response = await fetch("/productos"),
+        respuesta = await response.json();
+    mostrarDatosProductos(respuesta);
+}
+
+function mostrarDatosProductos(productos){
+    let filas = "";
+    productos.forEach(producto => {
+        filas += `
+            <tr onClick='mostrarProducto(${ JSON.stringify(producto) })'>
+                <td>${producto.nombre}</td>
+                <td>${producto.descripcion}</td>
+                <td>${producto.precio}</td>
+                <td>${producto.categoria}</td>
+                <td>${producto.estado}</td>
+                <td><button onClick='eliminarProducto(${ JSON.stringify(producto) }, event)' class="btn btn-outline-danger btn-sm">ELIMINAR</button></td>
+            </tr>
+        `;
+    });
+    tblProductos.innerHTML = filas;
+}
+
+function mostrarProducto(producto){
+    accion = "modificar";
+    idProducto = producto.idProducto;
+    txtNombreProducto.value = producto.nombre;
+    txtDescripcionProducto.value = producto.descripcion;
+    txtPrecioProducto.value = producto.precio;
+    txtCategoriaProducto.value = producto.categoria;
+    txtEstadoProducto.value = producto.estado;
+}
+
+function eliminarProducto(producto, event){
+    event.preventDefault();
+    if(confirm(`¿Está seguro de eliminar el producto ${producto.nombre}?`)){
+        idProducto = producto.idProducto;
+        accion = "eliminar";
+        guardarProductos();
+        alertify.success('Producto eliminado correctamente');
+    }
+}
+
+    btnBuscarProducto.addEventListener("click", e => {
+        e.preventDefault();
+        abrirVentana('busqueda_productos');
+    });
+</script>

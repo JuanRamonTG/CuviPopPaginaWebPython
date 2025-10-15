@@ -1,0 +1,67 @@
+<form id="frmBusquedaProductos">
+    <div class="card text-bg-dark">
+        <div class="card-header">
+            <div class="d-flex">
+                BUSQUEDA DE PRODUCTOS
+                <div class="ms-auto">
+                    <button data-form="busqueda_productos" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover table-dark table-striped text-white">
+                <thead>
+                    <tr>
+                        <th>NOMBRE</th>
+                        <th>DESCRIPCION</th>
+                        <th>PRECIO</th>
+                        <th>CATEGORIA</th>
+                        <th>ESTADO</th>
+                        <th>IMAGEN</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblProductos"></tbody>
+            </table>
+        </div>
+    </div>
+</form>
+
+<script>
+    obtenerProductos();
+
+    async function obtenerProductos(){
+        let response = await fetch("/productos"), 
+            respuesta = await response.json();
+        mostrarDatosProductos(respuesta);
+    }
+
+    function mostrarDatosProductos(productos){
+        let filas = "";
+        productos.forEach(producto => {
+            filas += `
+                <tr onClick='mostrarProducto(${ JSON.stringify(producto) })'>
+                    <td>${producto.nombre}</td>
+                    <td>${producto.descripcion}</td>
+                    <td>${producto.precio}</td>
+                    <td>${producto.categoria}</td>
+                    <td>${producto.estado}</td>
+                    <td>${producto.imagen || ""}</td>
+                    <td><button onClick='eliminarProducto(${ JSON.stringify(producto) }, event)' class="btn btn-outline-danger btn-sm">ELIMINAR</button></td>
+                </tr>
+            `;
+        });
+        tblProductos.innerHTML = filas;
+    }
+
+    function eliminarProducto(producto, event){
+        event.preventDefault();
+
+        if(confirm(`¿Está seguro de eliminar el producto ${producto.nombre}?`)){
+            idProducto = producto.idProducto;
+            accion = "eliminar";
+            guardarProductos();
+            alertify.success('Producto eliminado correctamente');
+        }
+    }
+</script>

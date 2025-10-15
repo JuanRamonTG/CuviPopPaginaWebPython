@@ -1,0 +1,67 @@
+<form id="frmBusquedaEmpleados">
+    <div class="card text-bg-dark">
+        <div class="card-header">
+            <div class="d-flex">
+                BUSQUEDA DE EMPLEADOS
+                <div class="ms-auto">
+                    <button data-form="busqueda_empleados" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover table-dark table-striped text-white">
+                <thead>
+                    <tr>
+                        <th>NOMBRE</th>
+                        <th>CARGO</th>
+                        <th>EMAIL</th>
+                        <th>TELEFONO</th>
+                        <th>USUARIO</th>
+                        <th>ESTADO</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblEmpleados"></tbody>
+            </table>
+        </div>
+    </div>
+</form>
+
+<script>
+    obtenerEmpleados();
+
+    async function obtenerEmpleados(){
+        let response = await fetch("/empleados"), 
+            respuesta = await response.json();
+        mostrarDatosEmpleados(respuesta);
+    }
+
+    function mostrarDatosEmpleados(empleados){
+        let filas = "";
+        empleados.forEach(empleado => {
+            filas += `
+                <tr onClick='mostrarEmpleado(${ JSON.stringify(empleado) })'>
+                    <td>${empleado.nombre}</td>
+                    <td>${empleado.cargo}</td>
+                    <td>${empleado.email}</td>
+                    <td>${empleado.telefono}</td>
+                    <td>${empleado.usuario}</td>
+                    <td>${empleado.estado}</td>
+                    <td><button onClick='eliminarEmpleado(${ JSON.stringify(empleado) }, event)' class="btn btn-outline-danger btn-sm">ELIMINAR</button></td>
+                </tr>
+            `;
+        });
+        tblEmpleados.innerHTML = filas;
+    }
+
+    function eliminarEmpleado(empleado, event){
+        event.preventDefault();
+
+        if(confirm(`¿Está seguro de eliminar al empleado ${empleado.nombre}?`)){
+            idEmpleado = empleado.idEmpleado;
+            accion = "eliminar";
+            guardarEmpleados();
+            alertify.success('Empleado eliminado correctamente');
+        }
+    }
+</script>
