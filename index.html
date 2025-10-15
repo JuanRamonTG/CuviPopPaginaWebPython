@@ -60,31 +60,41 @@
             });
         });
         
-        function abrirVentana(form, callback){
+       function abrirVentana(form, callback){
     let $ventana = $(`#${form}`);
 
+    // Si nunca se cargó la ventana, la carga desde el servidor
     if( $ventana.find('> form').length === 0 ){
-        // Si no está cargada, la carga
         fetch(`/vistas?form=${form}`)
         .then(response => response.text())
         .then(ventana => {
-            $ventana.html(ventana).draggable();
+            $ventana.html(ventana).draggable().show();
+            // Inicializar botones cada vez que se carga
             cerrarVentana();
             minimizarVentana();
             if(callback) callback();
         })
         .catch(error => console.error('Error al cargar el formulario:', error));
     } else {
-        // Si ya existe, mostrarla (aunque esté minimizada)
-        $ventana.show().removeClass('minimizado').css({
-            width: '',
-            height: '',
-            opacity: 1,
-            overflow: ''
-        });
-        $ventana.find('.contenido, form').show();
+        // Si ya existe, restaurar si estaba minimizada
+        if ($ventana.hasClass('minimizado')) {
+            $ventana.removeClass('minimizado').css({
+                width: '',
+                height: '',
+                opacity: 1,
+                overflow: ''
+            });
+            $ventana.find('form, .contenido').show();
+        }
+        // Mostrar siempre la ventana y traer al frente
+        $ventana.show().css({ zIndex: 9999 });
+
+        // Reasignar eventos de cerrar/minimizar
+        cerrarVentana();
+        minimizarVentana();
     }
 }
+
 
        function cerrarVentana() {
     $('.btn-close').off('click').click(e => {
