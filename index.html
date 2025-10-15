@@ -59,26 +59,76 @@
                 abrirVentana(form);
             });
         });
+        
         function abrirVentana(form, callback){
-            if( $(`#${form} > form`).length === 0 ){
-                fetch(`/vistas?form=${form}`)
-                .then(response => response.text())
-                .then(ventana => {
-                    $(`#${form}`).html(ventana).draggable();
-                    cerrarVentana();
-                    if(callback) callback();
-                })
-                .catch(error => console.error('Error al cargar el formulario:', error));
-            }else{
-                $(`#${form}`).show();
-            }
-        }
-        function cerrarVentana(){
-            $('.btn-close').off('click').click(e=>{
-                let form = e.target.dataset.form;
-                $(`#${form}`).hide();
+    let $ventana = $(`#${form}`);
+
+    if( $ventana.find('> form').length === 0 ){
+        // Si no está cargada, la carga
+        fetch(`/vistas?form=${form}`)
+        .then(response => response.text())
+        .then(ventana => {
+            $ventana.html(ventana).draggable();
+            cerrarVentana();
+            minimizarVentana();
+            if(callback) callback();
+        })
+        .catch(error => console.error('Error al cargar el formulario:', error));
+    } else {
+        // Si ya existe, mostrarla (aunque esté minimizada)
+        $ventana.show().removeClass('minimizado').css({
+            width: '',
+            height: '',
+            opacity: 1,
+            overflow: ''
+        });
+        $ventana.find('.contenido, form').show();
+    }
+}
+
+       function cerrarVentana() {
+    $('.btn-close').off('click').click(e => {
+        let form = e.target.dataset.form;
+        let $ventana = $(`#${form}`);
+        $ventana.fadeOut(200, function() {
+            $ventana.html(''); // se elimina después del efecto
+        });
+    });
+}
+
+
+
+
+    function minimizarVentana() {
+    $('.btn-minimizar').off('click').click(e => {
+        let form = e.target.dataset.form;
+        let $ventana = $(`#${form}`);
+
+        if ($ventana.hasClass('minimizado')) {
+            // Restaurar ventana
+            $ventana.removeClass('minimizado').css({
+                width: '',
+                height: '',
+                opacity: 1,
+                overflow: ''
             });
+            $ventana.find('.contenido, form').show();
+        } else {
+            // Minimizar ventana
+            $ventana.addClass('minimizado').css({
+                width: '250px',
+                height: '40px',
+                opacity: 0.8,
+                overflow: 'hidden'
+            });
+            $ventana.find('.contenido, form').hide();
         }
+    });
+}
+
+
+
+
     </script>
     
 </body>

@@ -4,6 +4,7 @@
             <div class="d-flex">
                 ADMINISTRACION DE EMPLEADOS
                 <div class="ms-auto">
+                    <button type="button" class="btn btn-sm btn-outline-secondary btn-minimizar" data-form="empleados">–</button>
                     <button data-form="empleados" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
                 </div>
             </div>
@@ -54,7 +55,7 @@
         </div>
         <div class="card-footer text-center">
             <input type="submit" id="btnGuardarEmpleado" name="btnGuardarEmpleado" class="btn btn-outline-primary" value="GUARDAR" />
-            <input type="reset" id="btnNuevoEmpleado" name="btnNuevoEmpleado" class="btn btn-outline-warning" value="NUEVO" />
+            <input type="button" id="btnNuevoEmpleado" name="btnNuevoEmpleado" class="btn btn-outline-warning" value="NUEVO" onclick="limpiarFormulario()" />
             <input type="button" id="btnBuscarEmpleado" name="btnBuscarEmpleado" class="btn btn-outline-info" value="BUSCAR" />
         </div>
     </div>
