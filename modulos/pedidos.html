@@ -1,0 +1,118 @@
+<form id="frmPedidos"> 
+    <div class="card text-bg-dark" style="min-width: 700px;">
+        <div class="card-header">
+            <div class="d-flex">
+                ADMINISTRACION DE PEDIDOS
+                <div class="ms-auto">
+                    <button data-form="pedidos" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row p-1">
+                <div class="col-3 col-md-2">ID CLIENTE</div>
+                <div class="col-9 col-md-3">
+                    <input required type="text" id="txtIdCliente" name="txtIdCliente" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row p-1">
+                <div class="col-3 col-md-2">PRODUCTOS</div>
+                <div class="col-9 col-md-8">
+                    <input required type="text" id="txtProductos" name="txtProductos" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row p-1">
+                <div class="col-3 col-md-2">TOTAL</div>
+                <div class="col-9 col-md-3">
+                    <input required type="number" step="0.01" id="txtTotal" name="txtTotal" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row p-1">
+                <div class="col-3 col-md-2">FECHA</div>
+                <div class="col-9 col-md-4">
+                    <input required type="datetime-local" id="txtFecha" name="txtFecha" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row p-1">
+                <div class="col-3 col-md-2">ESTADO</div>
+                <div class="col-9 col-md-3">
+                    <input required type="text" id="txtEstado" name="txtEstado" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row p-1">
+                <div class="col-3 col-md-2">OBSERVACIONES</div>
+                <div class="col-9 col-md-8">
+                    <input type="text" id="txtObservaciones" name="txtObservaciones" class="form-control form-control-sm" />
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <input type="submit" id="btnGuardarPedido" name="btnGuardarPedido" class="btn btn-outline-primary" value="GUARDAR" />
+            <input type="reset" id="btnNuevoPedido" name="btnNuevoPedido" class="btn btn-outline-warning" value="NUEVO" />
+            <input type="button" id="btnBuscarPedido" name="btnBuscarPedido" class="btn btn-outline-info" value="BUSCAR" />
+        </div>
+    </div>
+</form>
+
+<script>
+    var accion = "nuevo",
+        idPedido = 0;
+    
+    frmPedidos.addEventListener("submit", e => {
+        e.preventDefault();
+        guardarPedidos();
+    });
+
+    async function guardarPedidos(){
+        let datos = {
+            accion,
+            idPedido,
+            idCliente: txtIdCliente.value,
+            productos: txtProductos.value,
+            total: txtTotal.value,
+            fecha: txtFecha.value,
+            estado: txtEstado.value,
+            observaciones: txtObservaciones.value
+        };
+        let response = await fetch("/pedidos", {
+            method: "POST",
+            body: JSON.stringify(datos),
+        }), 
+        respuesta = await response.json();
+
+        if(respuesta.msg != "ok"){
+            alertify.error(`Error al procesar pedido: ${respuesta}`);
+            return;
+        }
+        limpiarFormulario();
+        obtenerPedidos();
+    }
+
+    function limpiarFormulario(){
+        accion = "nuevo";
+        idPedido = 0;
+        txtIdCliente.value = "";
+        txtProductos.value = "";
+        txtTotal.value = "";
+        txtFecha.value = "";
+        txtEstado.value = "";
+        txtObservaciones.value = "";
+    }
+
+    function mostrarPedido(pedido){
+        accion = "modificar";
+        idPedido = pedido.idPedido;
+        txtIdCliente.value = pedido.idCliente;
+        txtProductos.value = pedido.productos;
+        txtTotal.value = pedido.total;
+        txtFecha.value = pedido.fecha;
+        txtEstado.value = pedido.estado;
+        txtObservaciones.value = pedido.observaciones;
+        alertify.success(`Pedido ${pedido.idPedido} cargado para editar`);
+    }
+
+    btnBuscarPedido.addEventListener("click", e => {
+        e.preventDefault();
+        abrirVentana('busqueda_pedidos');
+    });
+</script>

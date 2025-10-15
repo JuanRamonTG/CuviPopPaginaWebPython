@@ -1,0 +1,67 @@
+<form id="frmBusquedaPedidos">
+    <div class="card text-bg-dark">
+        <div class="card-header">
+            <div class="d-flex">
+                BUSQUEDA DE PEDIDOS
+                <div class="ms-auto">
+                    <button data-form="busqueda_pedidos" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover table-dark table-striped text-white">
+                <thead>
+                    <tr>
+                        <th>ID CLIENTE</th>
+                        <th>PRODUCTOS</th>
+                        <th>TOTAL</th>
+                        <th>FECHA</th>
+                        <th>ESTADO</th>
+                        <th>OBSERVACIONES</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblPedidos"></tbody>
+            </table>
+        </div>
+    </div>
+</form>
+
+<script>
+    obtenerPedidos();
+
+    async function obtenerPedidos(){
+        let response = await fetch("/pedidos"), 
+            respuesta = await response.json();
+        mostrarDatosPedidos(respuesta);
+    }
+
+    function mostrarDatosPedidos(pedidos){
+        let filas = "";
+        pedidos.forEach(pedido => {
+            filas += `
+                <tr onClick='mostrarPedido(${ JSON.stringify(pedido) })'>
+                    <td>${pedido.idCliente}</td>
+                    <td>${pedido.productos}</td>
+                    <td>${pedido.total}</td>
+                    <td>${pedido.fecha}</td>
+                    <td>${pedido.estado}</td>
+                    <td>${pedido.observaciones}</td>
+                    <td><button onClick='eliminarPedido(${ JSON.stringify(pedido) }, event)' class="btn btn-outline-danger btn-sm">ELIMINAR</button></td>
+                </tr>
+            `;
+        });
+        tblPedidos.innerHTML = filas;
+    }
+
+    function eliminarPedido(pedido, event){
+        event.preventDefault();
+
+        if(confirm(`¿Está seguro de eliminar el pedido ${pedido.idPedido}?`)){
+            idPedido = pedido.idPedido;
+            accion = "eliminar";
+            guardarPedidos();
+            alertify.success('Pedido eliminado correctamente');
+        }
+    }
+</script>
