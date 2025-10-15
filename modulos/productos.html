@@ -4,7 +4,6 @@
             <div class="d-flex">
                 ADMINISTRACION DE PRODUCTOS
                 <div class="ms-auto">
-                    <button type="button" class="btn btn-sm btn-outline-secondary btn-minimizar" data-form="productos">–</button>
                     <button data-form="productos" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
                 </div>
             </div>
@@ -43,7 +42,7 @@
         </div>
         <div class="card-footer text-center">
             <input type="submit" id="btnGuardarProducto" name="btnGuardarProducto" class="btn btn-outline-primary" value="GUARDAR" />
-            <input type="button" id="btnNuevoProducto" name="btnNuevoProducto" class="btn btn-outline-warning" value="NUEVO" onclick="limpiarFormulario()" />
+            <input type="reset" id="btnNuevoProducto" name="btnNuevoProducto" class="btn btn-outline-warning" value="NUEVO" />
             <input type="button" id="btnBuscarProducto" name="btnBuscarProducto" class="btn btn-outline-info" value="BUSCAR" />
         </div>
     </div>
@@ -69,8 +68,11 @@ async function guardarProductos(){
         estado: txtEstadoProducto.value
     };
     let response = await fetch("/productos", {
-        method: "POST",
-        body: JSON.stringify(datos),
+            method: "POST",
+            body: JSON.stringify(datos),
+            headers: {
+                'Content-Type': 'application/json'
+            }
     }),
     respuesta = await response.json();
 

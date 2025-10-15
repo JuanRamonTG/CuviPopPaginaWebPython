@@ -25,6 +25,8 @@ class crud:
             cursor = self.conexion.cursor()
             cursor.execute(sql, datos)
             self.conexion.commit()
-            return "ok"
+            # devolver número de filas afectadas
+            return cursor.rowcount
         except Error as e:
+            print(f"Error al ejecutar SQL: {e}")
             return str(e)

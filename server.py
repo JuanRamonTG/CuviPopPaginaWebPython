@@ -43,6 +43,9 @@ class miServidor(SimpleHTTPRequestHandler):
     def do_GET(self):
         url_parseada = urlparse(self.path)
         path = url_parseada.path
+        # Normalizar: quitar slash final salvo en la raíz
+        if path != '/' and path.endswith('/'):
+            path = path.rstrip('/')
         parametros = parse_qs(url_parseada.query)
 
         # Ruta de login (mostrar formulario)
@@ -62,52 +65,60 @@ class miServidor(SimpleHTTPRequestHandler):
             return SimpleHTTPRequestHandler.do_GET(self)
 
     # CRUD Pedidos
-        if self.path == "/pedidos":
+        if path == "/pedidos":
             try:
                 pedidos = crudPedidos.consultar("")
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
                 self.wfile.write(json.dumps(pedidos, cls=CustomEncoder).encode('utf-8'))
+                return
             except Exception as e:
                 self.send_response(500)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
                 self.wfile.write(json.dumps({"msg": "error", "error": str(e)}).encode('utf-8'))
+                return
 
     # CRUD Empleados
-        elif self.path == "/empleados":
+        elif path == "/empleados":
             try:
                 empleados = crudEmpleados.consultar("")
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
                 self.wfile.write(json.dumps(empleados, cls=CustomEncoder).encode('utf-8'))
+                return
             except Exception as e:
                 self.send_response(500)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
                 self.wfile.write(json.dumps({"msg": "error", "error": str(e)}).encode('utf-8'))
+                return
 
     # CRUD Productos
-        elif self.path == "/productos":
+        elif path == "/productos":
             try:
                 productos = crudProductos.consultar("")
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
                 self.wfile.write(json.dumps(productos, cls=CustomEncoder).encode('utf-8'))
+                return
             except Exception as e:
                 self.send_response(500)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
                 self.wfile.write(json.dumps({"msg": "error", "error": str(e)}).encode('utf-8'))
+                return
 
         if path == "/vistas":
             self.path = '/modulos/' + parametros['form'][0] + '.html'
             return SimpleHTTPRequestHandler.do_GET(self)
 
         # Fallback: servir archivos estáticos (ej. /menu.html, /styles.css)
+        # Log de depuración para identificar peticiones que llegan aquí
+        print(f"Fallback estático para path: {self.path} -> parseado: {path} - User-Agent: {self.headers.get('User-Agent')}")
         return SimpleHTTPRequestHandler.do_GET(self)
 
     def do_POST(self):
@@ -162,10 +173,18 @@ class miServidor(SimpleHTTPRequestHandler):
                 resultado = crudEmpleados.administrar(datos)
             elif path == "/productos":
                 resultado = crudProductos.administrar(datos)
+                print(f"POST /productos -> administrar result: {resultado}")
             else:
                 raise ValueError("Ruta no válida para POST")
 
-            resp = {"msg": "ok" if resultado else "error"}
+            # Interpretar resultado: si es entero >0 -> ok, si es string (error) o 0 -> error
+            ok = False
+            if isinstance(resultado, int) and resultado > 0:
+                ok = True
+            if isinstance(resultado, str):
+                print(f"Error desde CRUD al administrar: {resultado}")
+
+            resp = {"msg": "ok" if ok else "error", "detail": str(resultado)}
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.end_headers()

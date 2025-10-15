@@ -9,21 +9,20 @@ class crud_productos:
     def administrar(self, datos):
         if datos['accion'] == "nuevo":
             sql = """
-                INSERT INTO productos (nombre, descripcion, precio, categoria, estado, imagen)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO productos (nombre, descripcion, precio, categoria, estado)
+                VALUES (%s, %s, %s, %s, %s)
             """
             valores = (
-                datos['nombre'],
-                datos['descripcion'],
-                datos['precio'],
-                datos['categoria'],
-                datos['estado'],
-                datos.get('imagen', None)
+                datos.get('nombre'),
+                datos.get('descripcion'),
+                datos.get('precio'),
+                datos.get('categoria'),
+                datos.get('estado')
             )
         if datos['accion'] == "modificar":
             sql = """
                 UPDATE productos 
-                SET nombre=%s, descripcion=%s, precio=%s, categoria=%s, estado=%s, imagen=%s
+                SET nombre=%s, descripcion=%s, precio=%s, categoria=%s, estado=%s
                 WHERE idProducto=%s
             """
             valores = (
@@ -32,7 +31,6 @@ class crud_productos:
                 datos['precio'],
                 datos['categoria'],
                 datos['estado'],
-                datos.get('imagen', None),
                 datos['idProducto']
             )
         if datos['accion'] == "eliminar":
