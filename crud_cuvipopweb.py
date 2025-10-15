@@ -8,7 +8,7 @@ class crud:
             host='localhost',
             user='root',
             password='',
-            database='db_'
+            database='db_cuvipop'
         )
         if self.conexion.is_connected():
             print("Conexion exitosa a la base de datos")
